@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.OData;
+﻿using Ipreo.Eventhub.Logger.Serilog;
+using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,8 +15,9 @@ namespace TodoApi.Controllers
     public class TodoController : ODataController
     {
         private readonly TodoContext _context;
+        private readonly ILogger _logger;
 
-        public TodoController(TodoContext context, ILoggerFactory loggerFactory)
+        public TodoController(TodoContext context)
         {
             _context = context;
 
@@ -29,16 +31,14 @@ namespace TodoApi.Controllers
                         Id = 1,
                         Name = "Item1",
                         IsComplete = true,
-                        TodoItemValues = new List<TodoItemValue> {
-                            new TodoItemValue { Id = 22, Value = 22 }
+                        TodoItemValues = new List<TodoItemValue> { new TodoItemValue { Id = 22, Value = 22 }
                         }
-
                     }
                 );
                 _context.SaveChanges();
             }
-
-            loggerFactory.AddConsole(LogLevel.Information).CreateLogger("Catch Endpoint");
+            var todoApiLogger = new SerilogFactory(null, LogConfiguration.ConfigurationRoot);
+            _logger = todoApiLogger.CreateLogger("todoapilogger");
         }
 
         [HttpGet(Name = "GetAllItems")]
@@ -49,10 +49,16 @@ namespace TodoApi.Controllers
             {
                 _context.TodoItems.UpdateRange();
                 var allItems = _context.TodoItems.Include(ti => ti.TodoItemValues).ToList();
+
+                _logger.LogInformation(
+                    "Get Values: {0} with ids: {1}", string.Join(";", allItems.Select(i => i.Name)),
+                    string.Join(";", allItems.Select(i => i.Id)));
+
                 return new ObjectResult(allItems);
             }
             catch (Exception e)
             {
+                _logger.LogInformation("Exception: ", e.Message);
                 return BadRequest("Wrong request: " + e.Message);
             }
         }
