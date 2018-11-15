@@ -28,7 +28,6 @@ namespace TodoApi
             }
         }
 
-
         private static void InitializeData(TodoContext context)
         {
             context.Database.Migrate();

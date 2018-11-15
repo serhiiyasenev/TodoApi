@@ -58,7 +58,7 @@ namespace TodoApi.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogInformation("Exception: ", e.Message);
+                _logger.LogInformation("Exception: " + e.Message);
                 return BadRequest("Wrong request: " + e.Message);
             }
         }
