@@ -1,8 +1,6 @@
-﻿using Ipreo.Eventhub.Logger.Serilog;
-using Microsoft.AspNet.OData;
+﻿using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +13,6 @@ namespace TodoApi.Controllers
     public class TodoController : ODataController
     {
         private readonly TodoContext _context;
-        private readonly ILogger _logger;
 
         public TodoController(TodoContext context)
         {
@@ -37,8 +34,6 @@ namespace TodoApi.Controllers
                 );
                 _context.SaveChanges();
             }
-            var todoApiLogger = new SerilogFactory(null, LogConfiguration.ConfigurationRoot);
-            _logger = todoApiLogger.CreateLogger("todoapilogger");
         }
 
         [HttpGet(Name = "GetAllItems")]
@@ -49,16 +44,10 @@ namespace TodoApi.Controllers
             {
                 _context.TodoItems.UpdateRange();
                 var allItems = _context.TodoItems.Include(ti => ti.TodoItemValues).ToList();
-
-                _logger.LogInformation(
-                    "Get Values: {0} with ids: {1}", string.Join(";", allItems.Select(i => i.Name)),
-                    string.Join(";", allItems.Select(i => i.Id)));
-
                 return new ObjectResult(allItems);
             }
             catch (Exception e)
             {
-                _logger.LogInformation("Exception: " + e.Message);
                 return BadRequest("Wrong request: " + e.Message);
             }
         }
