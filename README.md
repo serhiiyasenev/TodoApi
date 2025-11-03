@@ -1,5 +1,3 @@
-# TodoApi 
-
 ### Run all tests:
 ```bash
 cd tests/TodoApi.IntegrationTests
@@ -68,7 +66,6 @@ These tests are designed to run in CI/CD pipelines:
 - No external dependencies
 - Deterministic results
 
-
 To add new tests:
 
 1. Add test method with `[Fact]` attribute
@@ -92,7 +89,6 @@ public async Task Create_WithValidData_ReturnsCreated()
 }
 ```
 
-
 - **Total Tests**: 32
 - **Test Coverage**: All major endpoints covered
 - **Average Execution Time**: ~60ms per test
@@ -105,6 +101,5 @@ public async Task Create_WithValidData_ReturnsCreated()
 - [ ] Add API contract tests
 - [ ] Increase code coverage to 90%+
 - [ ] Fix failing tests related to value persistence
-
 
 For issues or questions about the tests, please check the main TodoApi project documentation.
