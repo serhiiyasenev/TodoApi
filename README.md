@@ -112,7 +112,7 @@ These tests are designed to run in CI/CD pipelines:
 - No external dependencies
 - Deterministic results
 
-## ?? Writing New Tests
+## ✏️ Writing New Tests
 
 To add new tests:
 
