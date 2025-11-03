@@ -24,11 +24,6 @@ dotnet test --filter "FullyQualifiedName~GetAll_ReturnsOk_WithTodoItems"
 dotnet test --collect:"XPlat Code Coverage"
 ```
 
-- **xUnit** - Testing framework
-- **FluentAssertions** - Fluent assertion library for readable test assertions
-- **Microsoft.AspNetCore.Mvc.Testing** - In-memory test server for integration testing
-- **In-Memory Database** - Each test runs with a fresh in-memory database
-
 ### Test Isolation
 - Each test class uses `IClassFixture<TodoApiFactory>` to share a test server instance
 - In-memory database is recreated for each test run
