@@ -36,7 +36,7 @@ This project contains comprehensive integration tests for the TodoApi applicatio
 ? **Full Workflow**
 - `FullValueWorkflow_CreatesUpdatesAndDeletesValue` - End-to-end value CRUD test
 
-## ?? Running the Tests
+## 🧪 Running the Tests
 
 ### Run all tests:
 ```bash
@@ -64,14 +64,14 @@ dotnet test --filter "FullyQualifiedName~GetAll_ReturnsOk_WithTodoItems"
 dotnet test --collect:"XPlat Code Coverage"
 ```
 
-## ?? Technologies Used
+## 🛠️ Technologies Used
 
 - **xUnit** - Testing framework
 - **FluentAssertions** - Fluent assertion library for readable test assertions
 - **Microsoft.AspNetCore.Mvc.Testing** - In-memory test server for integration testing
 - **In-Memory Database** - Each test runs with a fresh in-memory database
 
-## ?? Key Features
+## ✨ Key Features
 
 ### Test Isolation
 - Each test class uses `IClassFixture<TodoApiFactory>` to share a test server instance
@@ -92,27 +92,27 @@ items.Should().NotBeEmpty();
 item.Name.Should().Be("Expected Name");
 ```
 
-## ?? Test Data Management
+## 📊 Test Data Management
 
 Tests use:
 - Random IDs (10000-99999 range) to avoid conflicts
 - Helper method `CreateTestItemAsync()` for consistent item creation
 - Inline test data for straightforward scenarios
 
-## ?? Known Issues
+## ⚠️ Known Issues
 
 Some tests may fail due to controller implementation issues:
 - Value operations may not persist correctly
 - This indicates areas for improvement in the main API
 
-## ?? Continuous Integration
+## ⚙️ Continuous Integration
 
 These tests are designed to run in CI/CD pipelines:
 - Fast execution (< 5 seconds total)
 - No external dependencies
 - Deterministic results
 
-## ?? Writing New Tests
+## ✍️ Writing New Tests
 
 To add new tests:
 
@@ -137,14 +137,14 @@ public async Task Create_WithValidData_ReturnsCreated()
 }
 ```
 
-## ?? Test Metrics
+## 📈 Test Metrics
 
 - **Total Tests**: 32
 - **Test Coverage**: All major endpoints covered
 - **Average Execution Time**: ~60ms per test
 - **Success Rate**: 72% (23/32 passing)
 
-## ?? Future Improvements
+## 🚀 Future Improvements
 
 - [ ] Add performance tests
 - [ ] Add load tests
@@ -153,6 +153,6 @@ public async Task Create_WithValidData_ReturnsCreated()
 - [ ] Increase code coverage to 90%+
 - [ ] Fix failing tests related to value persistence
 
-## ?? Support
+## 💬 Support
 
 For issues or questions about the tests, please check the main TodoApi project documentation.
