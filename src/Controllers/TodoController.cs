@@ -1,16 +1,14 @@
-﻿using Microsoft.AspNet.OData;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using TodoApi.Models;
 
 namespace TodoApi.Controllers
 {
+    [ApiController]
     [Produces("application/json")]
     [Route("api/items")]
-    public class TodoController : ODataController
+    public class TodoController : ControllerBase
     {
         private readonly TodoContext _context;
 
@@ -18,22 +16,19 @@ namespace TodoApi.Controllers
         {
             _context = context;
 
-            if (!_context.TodoItems.Any())
-            {
-                context.Database.OpenConnection();
-                context.Database.ExecuteSqlCommand("SET IDENTITY_INSERT dbo.TodoItems ON; INSERT INTO dbo.TodoItems (Id, Name, IsComplete) VALUES (0, 'test1', 1);");
-                _context.TodoItems.Add(
-                    new TodoItem
-                    {
-                        Id = 1,
-                        Name = "Item1",
-                        IsComplete = true,
-                        TodoItemValues = new List<TodoItemValue> { new TodoItemValue { Id = 22, Value = 22 }
-                        }
-                    }
-                );
-                _context.SaveChanges();
-            }
+            if (_context.TodoItems.Any()) return;
+
+            _context.TodoItems.Add(
+                new TodoItem
+                {
+                    Id = 1,
+                    Name = "Item1",
+                    IsComplete = true,
+                    TodoItemValues = [new TodoItemValue { Id = 1, Value = 22 }]
+                }
+            );
+
+            _context.SaveChanges();
         }
 
         [HttpGet(Name = "GetAllItems")]
@@ -42,9 +37,8 @@ namespace TodoApi.Controllers
         {
             try
             {
-                _context.TodoItems.UpdateRange();
-                var allItems = _context.TodoItems.Include(ti => ti.TodoItemValues).ToList();
-                return new ObjectResult(allItems);
+                var allItems = _context.TodoItems.Include(ti => ti.TodoItemValues);
+                return Ok(allItems);
             }
             catch (Exception e)
             {
@@ -57,14 +51,13 @@ namespace TodoApi.Controllers
         {
             try
             {
-                _context.TodoItems.UpdateRange();
                 var item = _context.TodoItems.Include(ti => ti.TodoItemValues).FirstOrDefault(t => t.Id == id);
                 if (item == null)
                 {
                     return NotFound();
                 }
 
-                return new ObjectResult(item);
+                return Ok(item);
             }
             catch (Exception e)
             {
@@ -73,7 +66,7 @@ namespace TodoApi.Controllers
         }
 
         [HttpPost(Name = "CreateItem")]
-        public IActionResult Create([FromBody] TodoItem item)
+        public IActionResult Create([FromBody] TodoItem? item)
         {
             try
             {
@@ -82,17 +75,15 @@ namespace TodoApi.Controllers
                     return BadRequest();
                 }
 
-                List<TodoItem> items = _context.TodoItems.ToList();
+                var items = _context.TodoItems.ToList();
 
-                if (items.Count(it => it.Id == item.Id) != 0)
+                if (items.Any(it => it.Id == item.Id))
                 {
                     return BadRequest("Wrong request: item with id " + item.Id + " has already been added");
                 }
 
-                if (item.TodoItemValues == null)
-                {
-                    item.TodoItemValues = new List<TodoItemValue>();
-                }
+                item.TodoItemValues ??= [];
+
                 foreach (var val in item.TodoItemValues)
                 {
                     _context.TodoItemValues.Add(val);
@@ -101,7 +92,7 @@ namespace TodoApi.Controllers
                 _context.TodoItems.Add(item);
                 _context.SaveChanges();
 
-                return CreatedAtRoute("GetTodo", new { id = item.Id, name = item.Name, isComplete = item.IsComplete, values = item.TodoItemValues }, item);
+                return CreatedAtRoute("GetItemById", new { id = item.Id }, item);
             }
             catch (Exception e)
             {
@@ -110,7 +101,7 @@ namespace TodoApi.Controllers
         }
 
         [HttpPut("{id:int}", Name = "UpdateItemById")]
-        public IActionResult Update(int id, [FromBody] TodoItem item)
+        public IActionResult Update(int id, [FromBody] TodoItem? item)
         {
             try
             {
@@ -127,11 +118,11 @@ namespace TodoApi.Controllers
 
                 todo.IsComplete = item.IsComplete;
                 todo.Name = item.Name;
-                todo.TodoItemValues = item.TodoItemValues;
+                // Don't update TodoItemValues here - use the values endpoints for that
 
                 _context.TodoItems.Update(todo);
                 _context.SaveChanges();
-                return CreatedAtRoute("GetTodo", new { id = item.Id, name = item.Name, isComplete = item.IsComplete, values = item.TodoItemValues }, item);
+                return Ok(todo);
             }
             catch (Exception e)
             {
@@ -152,7 +143,7 @@ namespace TodoApi.Controllers
 
                 _context.TodoItems.Remove(todo);
                 _context.SaveChanges();
-                return new NoContentResult();
+                return NoContent();
             }
             catch (Exception e)
             {
