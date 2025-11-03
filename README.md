@@ -137,7 +137,7 @@ public async Task Create_WithValidData_ReturnsCreated()
 }
 ```
 
-## ?? Test Metrics
+## 📊 Test Metrics
 
 - **Total Tests**: 32
 - **Test Coverage**: All major endpoints covered
