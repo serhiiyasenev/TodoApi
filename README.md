@@ -92,7 +92,7 @@ items.Should().NotBeEmpty();
 item.Name.Should().Be("Expected Name");
 ```
 
-## ?? Test Data Management
+## 💾 Test Data Management
 
 Tests use:
 - Random IDs (10000-99999 range) to avoid conflicts
