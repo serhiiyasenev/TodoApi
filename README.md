@@ -24,7 +24,6 @@ dotnet test --filter "FullyQualifiedName~GetAll_ReturnsOk_WithTodoItems"
 dotnet test --collect:"XPlat Code Coverage"
 ```
 
-
 - **xUnit** - Testing framework
 - **FluentAssertions** - Fluent assertion library for readable test assertions
 - **Microsoft.AspNetCore.Mvc.Testing** - In-memory test server for integration testing
@@ -53,6 +52,7 @@ Tests use:
 - Random IDs (10000-99999 range) to avoid conflicts
 - Helper method `CreateTestItemAsync()` for consistent item creation
 - Inline test data for straightforward scenarios
+
 
 
 Some tests may fail due to controller implementation issues:
