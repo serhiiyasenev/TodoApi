@@ -1,17 +1,28 @@
-name: .NET Core
+name: Run Tests
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 2.2.108
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore TodoApi.sln
+
+    - name: Build solution
+      run: dotnet build TodoApi.sln --configuration Release --no-restore
+
+    - name: Run tests
+      run: dotnet test TodoApi.sln --configuration Release --no-build --verbosity normal
